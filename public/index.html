@@ -78,6 +78,111 @@
             font-size: 14px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
+
+        /* Mobile Controls */
+        #mobileControls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 150;
+        }
+
+        .control-btn {
+            position: absolute;
+            background: rgba(255,255,255,0.8);
+            border: 3px solid rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            user-select: none;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .control-btn:active {
+            background: rgba(255,255,255,1);
+            transform: scale(0.95);
+        }
+
+        #leftBtn {
+            left: 20px;
+            bottom: 80px;
+            width: 60px;
+            height: 60px;
+        }
+
+        #rightBtn {
+            left: 100px;
+            bottom: 80px;
+            width: 60px;
+            height: 60px;
+        }
+
+        #jumpBtn {
+            right: 30px;
+            bottom: 80px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255,107,107,0.8);
+            border-color: rgba(255,107,107,0.9);
+            color: white;
+        }
+
+        #jumpBtn:active {
+            background: rgba(255,107,107,1);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            #mobileControls {
+                display: block;
+            }
+            
+            #instructions {
+                display: none;
+            }
+            
+            #ui {
+                font-size: 18px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            canvas {
+                touch-action: none;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            #mobileControls {
+                height: 100px;
+            }
+            
+            #leftBtn, #rightBtn {
+                width: 50px;
+                height: 50px;
+                bottom: 25px;
+            }
+            
+            #rightBtn {
+                left: 85px;
+            }
+            
+            #jumpBtn {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -104,9 +209,15 @@
         </div>
 
         <div id="instructions">
-            <div>Arrow Keys: Move & Jump</div>
-            <div>Space: Jump</div>
-            <div>Hit ? blocks for power-ups!</div>
+            <div>Desktop: Arrow Keys/WASD + Space</div>
+            <div>Mobile: Touch controls below</div>
+        </div>
+
+        <!-- Mobile Touch Controls -->
+        <div id="mobileControls">
+            <div class="control-btn" id="leftBtn">←</div>
+            <div class="control-btn" id="rightBtn">→</div>
+            <div class="control-btn" id="jumpBtn">↑</div>
         </div>
     </div>
 
@@ -152,8 +263,13 @@
         let powerUps = [];
         let bricks = [];
 
-        // Input handling
+        // Input handling - Enhanced for mobile
         let keys = {};
+        let touches = {
+            left: false,
+            right: false,
+            jump: false
+        };
         
         document.addEventListener('keydown', (e) => {
             keys[e.code] = true;
@@ -162,6 +278,57 @@
         document.addEventListener('keyup', (e) => {
             keys[e.code] = false;
         });
+
+        // Mobile touch controls
+        function setupMobileControls() {
+            const leftBtn = document.getElementById('leftBtn');
+            const rightBtn = document.getElementById('rightBtn');
+            const jumpBtn = document.getElementById('jumpBtn');
+
+            // Prevent scrolling and zooming
+            document.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('gesturestart', (e) => {
+                e.preventDefault();
+            });
+
+            // Left button
+            leftBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touches.left = true;
+            });
+            leftBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                touches.left = false;
+            });
+
+            // Right button
+            rightBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touches.right = true;
+            });
+            rightBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                touches.right = false;
+            });
+
+            // Jump button
+            jumpBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touches.jump = true;
+            });
+            jumpBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                touches.jump = false;
+            });
+
+            // Prevent context menu on long press
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
+        }
 
         // Initialize level with much larger map
         function initLevel(levelNum) {
@@ -445,18 +612,22 @@
             mario.animFrame++;
             if (mario.invulnerable > 0) mario.invulnerable--;
 
-            // Mario input
-            if (keys['ArrowLeft'] || keys['KeyA']) {
+            // Mario input - Enhanced for mobile
+            let moveLeft = keys['ArrowLeft'] || keys['KeyA'] || touches.left;
+            let moveRight = keys['ArrowRight'] || keys['KeyD'] || touches.right;
+            let jump = keys['Space'] || keys['ArrowUp'] || keys['KeyW'] || touches.jump;
+
+            if (moveLeft) {
                 mario.velX = -mario.speed;
                 mario.direction = -1;
-            } else if (keys['ArrowRight'] || keys['KeyD']) {
+            } else if (moveRight) {
                 mario.velX = mario.speed;
                 mario.direction = 1;
             } else {
                 mario.velX *= 0.8;
             }
 
-            if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && mario.onGround) {
+            if (jump && mario.onGround) {
                 mario.velY = -mario.jumpPower;
                 mario.onGround = false;
             }
@@ -932,15 +1103,45 @@
         }
 
         // Initialize and start
+        setupMobileControls();
         initLevel(1);
         updateUI();
         gameLoop();
 
-        // Handle resize
-        window.addEventListener('resize', () => {
+        // Handle resize and orientation
+        function handleResize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            
+            // Adjust camera if needed
+            if (gameState.camera.x + canvas.width > 4000) {
+                gameState.camera.x = 4000 - canvas.width;
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 100);
         });
+
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            let now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Performance optimization for mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            // Reduce particle count on mobile
+            const originalCreateParticles = createParticles;
+            createParticles = function(x, y, color, count = 8) {
+                return originalCreateParticles(x, y, color, Math.min(count, 4));
+            };
+        }
     </script>
 </body>
 </html>
