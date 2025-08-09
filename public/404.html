@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Super Mario Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #ff4757;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 0px #ff6b6b;
+        }
+
+        .mario-icon {
+            font-size: 4rem;
+            margin: 1rem 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2c2c2c;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .game-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .coin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .coin:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .coin:nth-child(2) { top: 20%; right: 15%; animation-delay: 0.5s; }
+        .coin:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 1s; }
+        .coin:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .platform {
+            position: absolute;
+            background: #8B4513;
+            height: 20px;
+            border-radius: 10px;
+        }
+
+        .platform:nth-child(5) { 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 50px; 
+            border-radius: 0;
+        }
+        
+        .platform:nth-child(6) { 
+            top: 60%; 
+            left: 5%; 
+            width: 100px; 
+        }
+        
+        .platform:nth-child(7) { 
+            top: 40%; 
+            right: 10%; 
+            width: 80px; 
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem;
+                padding: 2rem;
+            }
+            
+            .error-code {
+                font-size: 4rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-elements">
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="coin"></div>
+        <div class="platform"></div>
+        <div class="platform"></div>
+        <div class="platform"></div>
+    </div>
+
+    <div class="container">
+        <div class="error-code">404</div>
+        <div class="mario-icon">🍄</div>
+        <h1>Oops! Wrong Pipe!</h1>
+        <p>
+            Looks like you've wandered into the wrong castle! 
+            The page you're looking for doesn't exist, but don't worry - 
+            our game is still waiting for you.
+        </p>
+        <a href="/" class="btn">🎮 Back to Game</a>
+    </div>
+</body>
+</html>
